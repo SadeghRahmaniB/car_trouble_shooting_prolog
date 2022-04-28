@@ -1,0 +1,409 @@
+% Diagnose some Car Defect
+
+start :-
+	write('This program diagnose Some defect from Pride & Rio that defects shown in menu'), nl,
+	write('This program work based on released guidness from Saipa Company'), nl,
+	write('please answer all question with "yes" or "no" and with lowercase'), nl,
+	select_problem_num,
+	fail.
+
+
+select_problem_num :-
+	write('**********************************************'),nl,
+	write('1-Odometer Problem'),nl,
+	write('2-Wiper Problem'),nl,
+	write('3-Power Window Problem'),nl,
+	write('4-Electric Wing Mirror Problem'),nl,
+	write('Select a number that realate to your defect'),nl,
+	write('**********************************************'),nl,
+   see_all.
+
+
+see_all :-
+	read(Choose),
+	problems(Choose).
+
+
+problems(Choose) :-
+	Choose == 1,odometer;
+   Choose == 2,wiper;
+	Choose == 3,power_windows;
+   Choose == 4,electric_wing_mirror.
+        
+/***********odometer**************odometer**************/
+
+odometer:-
+	odometer_problem(D),
+	explain(D),
+	fail.
+
+odometer_problem(tachometer_problem) :-
+	 fuse_tacho_burned(yes).
+	 
+odometer_problem(gas_marker_problem) :-
+	 tank_degree_problem(yes).
+	 
+odometer_problem(warning_gas_lamp_problem) :-
+	 gas_sensor_ok(no);
+	 fuse_gas_lamp_burned(yes).
+	 
+odometer_problem(water_marker_problem) :-
+	 water_marker_ok(no).
+	 
+odometer_problem(warning_lamp_oil_pressure_problem) :-
+	 fuse_oil_lamp_burned(yes);
+	 lamp_pressure_burned(yes);
+	 oil_sensor_ok(no).
+	 
+odometer_problem(warning_lamp_break_oil_problem) :-
+	 fuse_break_oil_lamp_burned(yes);
+	 lamp_break_burned(yes);
+	 float_oil_sensor_ok(no).
+	 
+odometer_problem(odometer_common):-
+	wiring_problem(yes).
+	
+
+	 
+odometer_problem(have_other_problem) :-
+	write('have other problem?'),
+	read(Any),
+	(Any=yes -> select_problem_num; write('GOOD LUCK')),nl,
+	write('*********************************************').
+	 
+
+
+	 
+/***********WIPER**************WIPER**************/
+
+wiper:-
+	wiper_problem(W),
+	explain(W),
+	fail.
+	
+wiper_problem(wiper_first_place) :-
+		fuse_wip_burned(yes).
+
+wiper_problem(wiper_timer) :-
+		etacs_is_ok(no).
+		
+wiper_problem(timer_first_place):-
+		engine_wip_is_ok(no);
+		handle_wip_is_ok(no).
+		
+		
+wiper_problem(have_other_problem) :-
+	write('have other problem?'),
+	read(Any),
+	(Any=yes -> select_problem_num; write('GOOD LUCK')),nl,
+	write('*********************************************').
+		
+/***********power_windows**************power_windows**************/
+
+power_windows:-
+	power_windows_problem(Z),
+	explain(Z),
+	fail.
+	
+power_windows_problem(pow_windows):-
+		windows_fuse_burned(yes);
+		ground_connection_is_connect(no);
+		button_power_windows_ok(no);
+		window_connector_problem(yes).
+		
+power_windows_problem(have_other_problem) :-
+	write('have other problem?'),
+	read(Any),
+	(Any=yes -> select_problem_num; write('GOOD LUCK')),nl.
+		
+/***********electric_wing_mirror**************electric_wing_mirror**************/
+
+electric_wing_mirror:-
+	electric_wing_mirror_problem(F),
+	explain(F),
+	fail.
+	
+electric_wing_mirror_problem(both_mirror):-
+		mirror_fuse_burned(yes);
+		ground_connection_is_poor(yes);
+		both_mirror_button_ok(no).
+		
+electric_wing_mirror_problem(one_mirror):-
+		connector_problem(yes).
+		mirror_operator_ok(no).
+				
+electric_wing_mirror_problem(have_other_problem) :-
+	write('have other problem?'),
+	read(Any),
+	(Any=yes -> select_problem_num; write('GOOD LUCK')),nl.
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~working database for odo~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+fuse_tacho_burned(unknown).
+fuse_tacho_burned(X) :-
+	retract(fuse_tacho_burned(unknown)),nl,
+	write('fuse of tachometer is burned?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check short circuit in circuit and change the fuse')),nl.
+	
+fuse_gas_lamp_burned(unknown).
+fuse_gas_lamp_burned(X) :-
+	retract(fuse_gas_lamp_burned(unknown)),nl,
+	write('fuse of gas lamp is burned?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check short circuit in circuit and change the fuse')),nl.
+	
+fuse_oil_lamp_burned(unknown).
+fuse_oil_lamp_burned(X) :-
+	retract(fuse_oil_lamp_burned(unknown)),nl,
+	write('fuse of oil pressure lamp is burned?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check short circuit in circuit and change the fuse')),nl.
+	
+fuse_break_oil_lamp_burned(unknown).
+fuse_break_oil_lamp_burned(X) :-
+	retract(fuse_break_oil_lamp_burned(unknown)),nl,
+	write('fuse of oil break lamp is burned?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check short circuit in circuit and change the fuse')),nl.
+	
+wiring_problem(unknown).
+wiring_problem(X) :-
+	retract(wiring_problem(unknown)),nl,
+	write('Checked wiring with tester and wiring still has problem?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check wiring with tester and repair it if was faulty')),nl.
+	
+tank_degree_problem(unknown).
+tank_degree_problem(X) :-
+	retract(tank_degree_problem(unknown)),nl,
+	write('tank degree have problem?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('change tank_degree.')),nl.
+	
+gas_sensor_ok(unknown).
+gas_sensor_ok(X) :-
+	retract(gas_sensor_ok(unknown)),nl,
+	write('sensor of gas is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check performance of sensor and if is out of work then change it.')),nl.
+	
+water_marker_ok(unknown).
+water_marker_ok(X) :-
+	retract(water_marker_ok(unknown)),nl,
+	write('checked water marker and that is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check performance of water marker and if is out of work then change it.')),nl.
+	
+lamp_burned(unknown).
+lamp_burned(X) :-
+	retract(lamp_burned(unknown)),nl,
+	write('checked related lamp and that is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('change related lamp.')),nl.
+	
+oil_sensor_ok(unknown).
+oil_sensor_ok(X) :-
+	retract(oil_sensor_ok(unknown)),nl,
+	write('sensor of oil is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check performance of sensor and if is out of work then change it.')),nl.
+	
+lamp_break_burned(unknown).
+lamp_break_burned(X) :-
+	retract(lamp_break_burned(unknown)),nl,
+	write('lamp of break oil is burned'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('change it.')),nl.
+	
+float_oil_sensor_ok(unknown).
+float_oil_sensor_ok(X) :-
+	retract(float_oil_sensor_ok(unknown)),nl,
+	write(' sensor of float oil marker is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check performance of sensor and if is out of work then change it.')),nl.
+
+
+	
+explain(tachometer_problem):-
+	write('your tachometer_problem have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+	
+explain(gas_marker_problem):-
+	write('your gas_marker have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+	
+explain(warning_gas_lamp_problem):-
+	write('your warning_gas_lamp have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+	
+explain(water_marker_problem):-
+	write('your water marker have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+	
+explain(warning_lamp_oil_pressure_problem):-
+	write('your warning_lamp_oil_pressure have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+	
+explain(warning_lamp_break_oil_problem):-
+	write('your warning_lamp_break_oil have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+	
+explain(odometer_common):-
+	write('you have four problem that are warning_lamp_break_oil, warning_lamp_oil_pressure_problem, gas_marker, tachometer'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~working database for wiper~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+fuse_wip_burned(unknown).
+fuse_wip_burned(X):-
+	retract(fuse_wip_burned(unknown)),nl,
+	write('fuse_wipe is burned?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check short circuit in circuit and change the fuse.')),nl.
+
+engine_wip_is_ok(unknown).
+engine_wip_is_ok(X):-
+	retract(engine_wip_is_ok(unknown)),nl,
+	write('engine of wiper is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check performance of wiper engine and if is burned then change it.')),nl.
+
+handle_wip_is_ok(unknown).
+handle_wip_is_ok(X):-
+	retract(handle_wip_is_ok(unknown)),nl,
+	write('handle of wiper is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('change the handle of wiper')),nl.
+	
+etacs_is_ok(unknown).
+etacs_is_ok(X):-
+	retract(etacs_is_ok(unknown)),nl,
+	write('checked Electronic Time and Alarm Control System and it is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check performance of set of ETACS')),nl.
+	
+	
+explain(wiper_first_place):-
+	write('your wiper wont back to it first place, that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+	
+explain(wiper_timer):-
+	write('your wiper_timer have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+	
+	
+explain(timer_first_place):-
+	write('You have timer problem and even your wiper wont back to its first place'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~working database for power windows~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+windows_fuse_burned(unknown).
+windows_fuse_burned(X) :-
+	retract(windows_fuse_burned(unknown)),nl,
+	write('Checked related fuse and it is burned?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check short circuit in circuit and change the fuse')),nl.
+	
+ground_connection_is_connect(unknown).
+ground_connection_is_connect(X) :-
+	retract(ground_connection_is_connect(unknown)),nl,
+	write('ground connection is connect?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check the body connection')),nl.
+	
+button_power_windows_ok(unknown).
+button_power_windows_ok(X) :-
+	retract(button_power_windows_ok(unknown)),nl,
+	write('is button of power windows ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('change the button')),nl.
+	
+window_connector_problem(unknown).
+window_connector_problem(X) :-
+	retract(window_connector_problem(unknown)),nl,
+	write('is connector disconnected or has weak connect?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('change the connector')),nl.
+
+explain(pow_windows):-
+	write('your power windows have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.	
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~working database for side mirror~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/		
+
+mirror_fuse_burned(unknown).
+mirror_fuse_burned(X) :-
+	retract(mirror_fuse_burned(unknown)),nl,
+	write('Checked related fuse and it is burned?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check short circuit in circuit and change the fuse')),nl.
+	
+ground_connection_is_poor(unknown).
+ground_connection_is_poor(X) :-
+	retract(ground_connection_is_poor(unknown)),nl,
+	write('ground connection is poor?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check the body connection')),nl.
+	
+connector_problem(unknown).
+connector_problem(X) :-
+	retract(connector_problem(unknown)),nl,
+	write('connector of mirror is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('Repair or change the connector ')),nl.
+	
+both_mirror_button_ok(unknown).
+both_mirror_button_ok(X) :-
+	retract(both_mirror_button_ok(unknown)),nl,
+	write('is both buttons of mirror ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('check button performance of each side and change it if necessary')),nl.
+	
+mirror_operator_ok(unknown).
+mirror_operator_ok(X) :-
+	retract(mirror_operator_ok(unknown)),nl,
+	write('operator of mirror is ok?'),nl,
+	read(Reply),
+	asserta(Reply),
+	(X=Reply -> write('change the operator ')),nl.
+
+	
+explain(both_mirror):-
+	write('your both mirrors have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+	
+explain(one_mirror):-
+	write('one of your mirror have problem that we explained the problem to you before'),nl,
+	write('-------------------------------------------------------------------------------------------------------------------------'),nl.
+				
+:-start.
